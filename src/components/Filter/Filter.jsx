@@ -1,24 +1,33 @@
-import css from './Filter.module.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { setFilter } from '../../redux/filterSlice';
-import { selectFilter } from '../../redux/selectors';
-const Filter = () => {
-  const filter = useSelector(selectFilter);
+import { Box, IconButton, InputAdornment, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import { useDispatch } from 'react-redux';
+import { fetchFilter } from 'redux/contacts/filterSlice';
+
+export const Filter = () => {
   const dispatch = useDispatch();
-  const handleFilterChange = filterValue => dispatch(setFilter(filterValue));
+  const handleFilter = e => {
+    const form = e.currentTarget;
+    const filterValue = form.elements.filter.value;
+    dispatch(fetchFilter(filterValue));
+  };
   return (
-    <label className={css.label}>
-      Find contacts by name:
-      <input
-        className={css.input}
-        type="text"
+    <Box component="form" onChange={handleFilter} noValidate>
+      <TextField
+        size="small"
+        margin="normal"
+        id="filter"
+        label="Search"
         name="filter"
-        placeholder="Enter name"
-        value={filter}
-        onChange={evt => handleFilterChange(evt.currentTarget.value.trim())}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton>
+                <SearchIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
-    </label>
+    </Box>
   );
 };
-
-export default Filter;

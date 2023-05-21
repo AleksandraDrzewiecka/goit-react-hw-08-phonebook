@@ -1,0 +1,36 @@
+.container {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form {
+    margin-top: 16px;
+}
+
+button {
+    background: rgb(90, 80, 80);
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+.loginLink {
+    background-color: transparent;
+    text-decoration: none;
+    color: rgb(90, 80, 80);
+}
+
+button:hover
+button:focus {
+    background: rgb(90, 80, 80);
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+.loginLink:hover
+.loginLink:focus {
+    background-color: transparent;
+    text-decoration: none;
+    color: rgb(90, 80, 80);
+}

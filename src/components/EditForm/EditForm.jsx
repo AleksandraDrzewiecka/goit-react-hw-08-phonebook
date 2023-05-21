@@ -1,14 +1,15 @@
 import { Box, Button, TextField } from '@mui/material';
-import { debounce } from 'lodash';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'redux/contacts/operation';
+import { updateContact } from 'redux/contacts/operation';
 import { selectContacts } from 'redux/contacts/selectors';
 
-export const ContactForm = () => {
+export const EditForm = ({ id = null }) => {
   const [errorName, setErrorName] = useState('');
   const [errorPhone, setErrorPhone] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
 
   const validateInputName = input => {
     const nameRegex =
@@ -21,13 +22,9 @@ export const ContactForm = () => {
 
   const handleInputChangeName = event => {
     const inputValue = event.target.value;
+    setName(inputValue);
     setErrorName(validateInputName(inputValue));
   };
-  // eslint-disable-next-line
-  const debouncedHandleInputChangeName = useCallback(
-    debounce(e => handleInputChangeName(e), 200),
-    []
-  );
 
   const validateInputPhone = input => {
     const phoneRegex =
@@ -35,18 +32,15 @@ export const ContactForm = () => {
     if (!phoneRegex.test(input)) {
       return 'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +';
     }
+
     return undefined;
   };
 
   const handleInputChangePhone = event => {
     const inputValue = event.target.value;
+    setPhone(inputValue);
     setErrorPhone(validateInputPhone(inputValue));
   };
-  // eslint-disable-next-line
-  const debouncedHandleInputChangePhone = useCallback(
-    debounce(e => handleInputChangePhone(e), 200),
-    []
-  );
 
   const dispatch = useDispatch();
   const contacts = useSelector(selectContacts);
@@ -63,10 +57,15 @@ export const ContactForm = () => {
           name.toLowerCase().replace(/\s/g, '')
       )
     ) {
-      toast(`${name} is already in contacts!`, {
-        icon: '⚠️',
-      });
-      return;
+      const index = contacts.findIndex(
+        contact => contact.name.replace(/\s/g, '') === name.replace(/\s/g, '')
+      );
+      if (index !== indexFromId) {
+        toast(`${name} is already in contacts!`, {
+          icon: '⚠️',
+        });
+        return;
+      }
     }
 
     if (
@@ -79,15 +78,24 @@ export const ContactForm = () => {
         contact =>
           contact.number.replace(/\s/g, '') === number.replace(/\s/g, '')
       );
-      toast(`${number} is already in contacts! (${contacts[index].name})`, {
-        icon: '⚠️',
-      });
-      return;
+      if (index !== indexFromId) {
+        toast(`${number} is already in contacts! (${contacts[index].name})`, {
+          icon: '⚠️',
+        });
+        return;
+      }
     }
-
-    dispatch(addContact({ name, number }));
+    dispatch(updateContact({ contactId: id, name, number }));
     form.reset();
   };
+
+  const idContact = contacts.find(el => el.id === id);
+  const indexFromId = contacts.findIndex(contact => contact.id === id);
+
+  useEffect(() => {
+    setName(idContact.name);
+    setPhone(idContact.number);
+  }, [idContact]);
 
   return (
     <Box
@@ -97,6 +105,7 @@ export const ContactForm = () => {
       flexDirection={'column'}
     >
       <TextField
+        value={name}
         required
         margin="normal"
         id="name"
@@ -105,9 +114,10 @@ export const ContactForm = () => {
         type="text"
         error={!!errorName}
         helperText={errorName}
-        onChange={debouncedHandleInputChangeName}
+        onChange={handleInputChangeName}
       />
       <TextField
+        value={phone}
         required
         margin="normal"
         id="phone"
@@ -116,7 +126,7 @@ export const ContactForm = () => {
         type="tel"
         error={!!errorPhone}
         helperText={errorPhone}
-        onChange={debouncedHandleInputChangePhone}
+        onChange={handleInputChangePhone}
       />
       <Button
         variant="contained"
@@ -124,7 +134,7 @@ export const ContactForm = () => {
         sx={{ mt: 2 }}
         disabled={!!errorName || !!errorPhone}
       >
-        Add contact
+        Edit contact
       </Button>
     </Box>
   );

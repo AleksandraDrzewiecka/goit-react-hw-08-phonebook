@@ -13,3 +13,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+button {
+  background: rgb(90, 80, 80);
+  margin-top: 24px;
+  margin-bottom: 16px;
+}

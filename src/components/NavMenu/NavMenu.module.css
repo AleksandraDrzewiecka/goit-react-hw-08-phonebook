@@ -1,0 +1,33 @@
+.navMenuContainer {
+    display: flex;
+    align-items: center;
+}
+
+.menuButton {
+    color: #333;
+    border: none;
+    outline: none;
+    margin-right: 20px;
+}
+
+.menuButton:hover {
+    color: #555;
+    cursor: grab;
+}
+
+.menuList {
+    list-style: none;
+    padding: 0;
+    margin: 10px;
+}
+
+.menuItem {
+    font-size: 14px;
+    padding: 10px;
+    cursor: pointer;
+
+}
+
+.menuItem:hover {
+    background-color: #f0f0f0;
+}
